@@ -6,9 +6,9 @@ Our goal is to build a **simple, user-friendly, and sacalable** soution for **sm
 ---
 
 # Key Users
--**👤 Small Business Owners** -> Need to track stock levels and reorder supplies.
--**👥 Warehouse Managers** -> Oversee multiple products across different locations.
--**👨‍💼 Store Employee** -> Update Inventory and check product locations.
--**📦 Suppliers** -> Receive purchase orders and restocking requests.
+- **👤 Small Business Owners** -> Need to track stock levels and reorder supplies.
+- **👥 Warehouse Managers** -> Oversee multiple products across different locations.
+- **👨‍💼 Store Employee** -> Update Inventory and check product locations.
+- **📦 Suppliers** -> Receive purchase orders and restocking requests.
 
 ---

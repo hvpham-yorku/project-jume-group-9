@@ -1,48 +1,55 @@
-"use client";
-
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { UserCircle } from "lucide-react";
+import { useEffect, useState } from "react";
+import { createClient } from "@/utils/supabase/client";
+
+const supabase = createClient();
 
 const Sidebar = () => {
-    const pathname = usePathname();
+    const [user, setUser] = useState<{ name: string; avatar: string | null }>({
+        name: "User",
+        avatar: null
+    });
 
-    const navItems = [
-        { name: "Home", href: "/home", icon: "🏠" },
-        { name: "Orders", href: "/orders", icon: "📦" },
-        { name: "Products", href: "/products", icon: "📊" },
-        { name: "Analytics", href: "/analytics", icon: "📈" },
-    ];
+    useEffect(() => {
+        const fetchUserProfile = async () => {
+            const { data, error } = await supabase
+                .from("profiles")
+                .select("name, avatar")
+                .eq("id", (await supabase.auth.getUser()).data?.user?.id)
+                .single();
+
+            if (!error && data) {
+                setUser({ name: data.name, avatar: data.avatar });
+            }
+        };
+        fetchUserProfile();
+    }, []);
 
     return (
-        <nav className="w-64 h-screen bg-white p-5 shadow-lg flex flex-col justify-between fixed">
+        <div className="fixed left-0 top-0 h-full w-64 bg-gray-900 text-white flex flex-col justify-between p-6">
+            {/* Sidebar Navigation */}
             <div>
-                <h1 className="text-2xl font-bold mb-8 tracking-wide text-gray-800">SmartStock</h1>
-                <ul className="space-y-4">
-                    {navItems.map((item) => (
-                        <li key={item.href}>
-                            <Link
-                                href={item.href}
-                                className={`flex items-center gap-3 p-3 rounded-xl transition ${
-                                    pathname === item.href ? "bg-green-100 text-green-700 font-semibold" : "text-gray-600 hover:bg-gray-100"
-                                }`}
-                            >
-                                <span>{item.icon}</span>
-                                {item.name}
-                            </Link>
-                        </li>
-                    ))}
-                </ul>
+                <h2 className="text-2xl font-bold mb-6">SmartStock</h2>
+                <nav className="space-y-6">
+                    <Link href="/" className="block py-3 text-3xl hover:bg-gray-800 rounded-lg px-4">🏠 Home</Link>
+                    <Link href="/orders" className="block py-3 text-3xl hover:bg-gray-800 rounded-lg px-4">📦 Orders</Link>
+                    <Link href="/products" className="block py-3 text-3xl hover:bg-gray-800 rounded-lg px-4">🏷️ Product</Link>
+                    <Link href="/analytics" className="block py-3 text-3xl hover:bg-gray-800 rounded-lg px-4">📊 Analytics</Link>
+                </nav>
             </div>
 
             {/* Profile Section */}
-            <div className="mt-auto flex flex-col items-center pb-6">
+            <div className="flex flex-col items-center">
                 <Link href="/profile" className="flex flex-col items-center">
-                    <UserCircle className="w-14 h-14 text-gray-400" /> {/* User icon */}
-                    <p className="text-sm mt-2 text-gray-600 hover:text-gray-800 transition">Edit Profile</p>
+                    <img
+                        src={user.avatar || "https://via.placeholder.com/100?text=👤"}
+                        alt="Profile"
+                        className="w-16 h-16 rounded-full border-2 border-gray-500"
+                    />
+                    <span className="mt-2 text-lg text-gray-300">{user.name}</span>
                 </Link>
             </div>
-        </nav>
+        </div>
     );
 };
 

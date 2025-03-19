@@ -1,27 +1,29 @@
-"use client";
+"use client"; // Ensure client-side rendering
 
-import { useState, useEffect } from "react";
-import { PieChart, Pie, Cell } from "recharts";
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+import { Pie } from "react-chartjs-2";
 
-const PieChartComponent = ({ data }: { data: any[] }) => {
-    const COLORS = ["#FF4D4D", "#4CAF50"];
-    const [isClient, setIsClient] = useState(false);
+// Register Chart.js components
+ChartJS.register(ArcElement, Tooltip, Legend);
 
-    useEffect(() => {
-        setIsClient(true);
-    }, []);
+interface PieChartProps {
+    data: { name: string; value: number }[];
+    hoverEffect?: boolean; // Optional hover effect prop
+}
 
-    if (!isClient) return <div className="text-gray-500">Loading chart...</div>;
+const PieChartComponent: React.FC<PieChartProps> = ({ data, hoverEffect = false }) => {
+    const chartData = {
+        labels: data.map((item) => item.name),
+        datasets: [
+            {
+                data: data.map((item) => item.value),
+                backgroundColor: ["#FF6666", "#66CC66"],
+                hoverOffset: hoverEffect ? 8 : 4, // Apply a stronger hover effect if enabled
+            },
+        ],
+    };
 
-    return (
-        <PieChart width={200} height={200}>
-            <Pie data={data} cx="50%" cy="50%" innerRadius={50} outerRadius={80} dataKey="value">
-                {data.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index]} />
-                ))}
-            </Pie>
-        </PieChart>
-    );
+    return <Pie data={chartData} />;
 };
 
 export default PieChartComponent;

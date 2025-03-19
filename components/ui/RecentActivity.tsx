@@ -1,26 +1,55 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { createClient } from "@/utils/supabase/client";
+
+const supabase = createClient();
 
 const RecentActivity = () => {
-    // Mock recent activity data (Replace with Supabase later)
-    const [activities, setActivities] = useState([
-        { id: 1, action: "Order #1023 placed", timestamp: "2025-03-14 14:30" },
-        { id: 2, action: "Product 'Laptop' added to inventory", timestamp: "2025-03-14 13:15" },
-        { id: 3, action: "Stock updated for Item #543", timestamp: "2025-03-13 16:45" },
-    ]);
+    const [activities, setActivities] = useState<{ id: any; action: string; timestamp: any }[]>([]);
+
+    useEffect(() => {
+        const fetchRecentOrders = async () => {
+            const { data, error } = await supabase
+                .from("orders")
+                .select("id, order_number, fulfillment_status, notified, date")
+                .order("date", { ascending: false })
+                .limit(5);
+
+            if (error) {
+                console.error("Error fetching recent orders:", error);
+                return;
+            }
+
+            if (!data) {
+                console.warn("No data found for recent orders.");
+                setActivities([]); // Set an empty array if no data
+                return;
+            }
+
+            const formattedActivities = data.map((order) => ({
+                id: order.id,
+                action: order.notified
+                    ? `Customer notified about Order #${order.order_number}`
+                    : `Order #${order.order_number} marked as ${order.fulfillment_status}`,
+                timestamp: order.date,
+            }));
+
+            setActivities(formattedActivities);
+        };
+
+        fetchRecentOrders();
+    }, []);
 
     return (
-        <div className="bg-white p-6 shadow rounded-lg mt-6">
-            <h3 className="text-lg font-semibold mb-4">Recent Activity</h3>
-            {activities.length === 0 ? (
-                <p className="text-gray-500">No recent activity.</p>
-            ) : (
+        <div className="bg-white p-6 shadow-lg rounded-xl border border-gray-200 w-full">
+            <h3 className="text-lg font-semibold text-gray-700 mb-4">Recent Activity</h3>
+            {activities.length === 0 ? <p className="text-gray-500">No recent activity.</p> : (
                 <ul className="space-y-3">
                     {activities.map((activity) => (
                         <li key={activity.id} className="border-b pb-2 last:border-none">
                             <p className="text-sm text-gray-700">{activity.action}</p>
-                            <p className="text-xs text-gray-500">{activity.timestamp}</p>
+                            <p className="text-xs text-gray-500">{new Date(activity.timestamp).toLocaleString()}</p>
                         </li>
                     ))}
                 </ul>

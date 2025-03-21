@@ -39,13 +39,14 @@ export const updateSession = async (request: NextRequest) => {
     // https://supabase.com/docs/guides/auth/server-side/nextjs
     const user = await supabase.auth.getUser();
     const isNOTloggedin = !!user.error;
+    const isLoggedIn = !isNOTloggedin;
 
     // protected routes
-    if (request.nextUrl.pathname === "/" && isNOTloggedin) {
-      return NextResponse.redirect(new URL("/sign-in", request.url));
+    if (isNOTloggedin && (request.nextUrl.pathname === "/" || request.nextUrl.pathname.startsWith("/admin"))) {
+      return NextResponse.redirect(new URL("/auth/sign-in", request.url));
     }
 
-    if (request.nextUrl.pathname.startsWith("/sign-in") && !isNOTloggedin) {
+    if (isLoggedIn && request.nextUrl.pathname.startsWith("/auth")) {
       return NextResponse.redirect(new URL("/", request.url));
     }
 

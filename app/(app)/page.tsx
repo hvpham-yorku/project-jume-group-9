@@ -1,59 +1,17 @@
-"use client";
+import React from "react";
 
-import { useState } from "react";
-import PieChartComponent from "@/components/ui/PieChartComponent";
-import Sidebar from "@/components/ui/Sidebar";
-import RecentActivity from "@/components/ui/RecentActivity";
-import WeatherWidget from "@/components/ui/WeatherWidget";
+export default async function OrgPickerPage() {
+  // does user exists in the org_memeber table?
 
-const Home = () => {
-    const [user, setUser] = useState({ name: "Mark" });
+  // if so, we show a list of orgs the user is a member of
 
-    const stockSummary = {
-        lowStockItems: 5,
-        totalItems: 50,
-        activeItems: 45,
-    };
+  // if there's only one org, we redirect to the org
 
-    const data = [
-        { name: "Low Stock", value: stockSummary.lowStockItems },
-        { name: "Active", value: stockSummary.activeItems },
-    ];
+  // if there's no orgs, we show a message to the user to create an org
 
-    return (
-        <div className="flex min-h-screen bg-gray-50">
-            {/* Sidebar Navigation */}
-            <Sidebar />
-
-            {/* Main Content */}
-            <main className="ml-64 flex-1 p-8">
-                <h2 className="text-4xl font-extrabold text-gray-800 mb-8">Welcome, {user.name}!</h2>
-
-                {/* Stock Summary & Chart */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="bg-white p-6 shadow-lg rounded-xl border border-gray-200 w-full">
-                        <h3 className="text-lg font-semibold text-gray-700">Stock Summary</h3>
-                        <p className="text-red-500 text-xl font-medium">Low Stock Items: {stockSummary.lowStockItems}</p>
-                        <p className="text-lg text-gray-600">Total Items: {stockSummary.totalItems}</p>
-                    </div>
-
-                    {/* Circular Graph */}
-                    <div className="bg-white p-6 shadow-lg rounded-xl border border-gray-200 flex justify-center w-full">
-                        <PieChartComponent data={data} />
-                    </div>
-                </div>
-
-                {/* Weather & Recent Activity Row */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-                    {/* Weather Widget */}
-                    <WeatherWidget />
-
-                    {/* Recent Activity */}
-                    <RecentActivity />
-                </div>
-            </main>
-        </div>
-    );
-};
-
-export default Home;
+  return (
+    <div>
+      <h1>Organization Picker</h1>
+    </div>
+  );
+}

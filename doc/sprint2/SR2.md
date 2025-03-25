@@ -1,7 +1,7 @@
 # Sprint 2 Retrospective - SmartStock
 
 ## Date
-March 19, 2025
+March 20, 2025
 
 ## Attendees
 - Erfan (Home Page Developer)
@@ -33,7 +33,7 @@ March 19, 2025
 
 ---
 
-## Action Items for Sprint 3 🔧
+## Action Items for Sprint 2 🔧
 
 - 🔧 Establish shared TypeScript interfaces earlier to avoid repetitive `any` type fixes.
 - 🔧 Begin component work earlier in the sprint to spread out the workload better.

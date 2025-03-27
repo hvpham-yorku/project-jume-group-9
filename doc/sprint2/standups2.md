@@ -37,3 +37,23 @@ _**4. Do you have any blockers?**_
 - Supabase update propagation delay is occasionally affecting the real-time UI state updates.
 
 ---
+
+
+## **Tuesday [26/03/2025] - Sprint #2 Standup #3**
+
+_**1. What did you work on since the last standup?**_
+- Orders Page now fully functional with create, update, and search features.
+- Added placeholder image support and profile navigation on the sidebar.
+- Started the Analytics Page structure.
+
+_**2. What do you commit to next?**_
+- Complete the Analytics Page with real charting data using Recharts.
+- Final bug fixing and refactor styles across all pages for design consistency.
+
+_**3. When do you think you'll be done?**_
+- Analytics Page and cleanup should be complete by March 29.
+
+_**4. Do you have any blockers?**_
+- No blockers, but still testing chart rendering edge cases (e.g., when there is no data).
+
+---

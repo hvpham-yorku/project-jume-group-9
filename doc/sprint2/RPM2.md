@@ -10,22 +10,25 @@ To deliver a fully functional inventory and order management system for SmartSto
 
 **Focus Areas:**
 
-- **Orders Management:**  
-  Enable admins to manage customer orders and view/update order details dynamically.  
-  - **User Stories:** As an admin, I can view, create, and update customer orders.
+- **🔄 Orders Management**  
+  *Dynamic order control center for admins*  
+  - View/update order details in real-time  
+  - **User Story:** As an admin, I can view, create, and update customer orders  
 
-- **Product Inventory:**  
-  Implement product listing, searching, adding, and editing features.  
-  - **User Stories:** As an admin, I can view the inventory list, add new products, and edit product details.
+- **📦 Product Inventory**  
+  *Complete product catalog management*  
+  - Search, add, and edit product listings  
+  - **User Story:** As an admin, I can view the inventory list, add new products, and edit product details  
 
-- **Dashboard Enhancements (Home Page):**  
-  Improve the home page with real data visualization, interactive charts, and activity history.  
-  - **User Stories:** As a user, I can see the current stock summary and recent activity.
+- **📊 Dashboard (Home Page)**  
+  *Real-time business intelligence*  
+  - Interactive charts and activity history  
+  - **User Story:** As a user, I can see the current stock summary and recent activity  
 
-- **Analytics Page:**  
-  Create a dedicated view for analytics and insights using charts and statistics.  
-  - **User Stories:** As a user, I can view insights about stock and order performance over time.
-
+- **📈 Analytics Page**  
+  *Data-driven decision making*  
+  - Visual insights with charts/statistics  
+  - **User Story:** As a user, I can view insights about stock and order performance over time  
 ---
 
 ## Scope of the Project: Epics and Key Features  

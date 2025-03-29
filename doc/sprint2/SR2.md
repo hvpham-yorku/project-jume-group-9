@@ -44,9 +44,12 @@ March 20, 2025
 
 ## Lessons Learned 📘
 
-- Designing with real data in mind (using Supabase) helped make the UI more dynamic and relevant.
-- Communication between frontend and backend developers is essential for accurate data structure usage.
-- Visualizing recent activities and summaries creates better UX for users—this will carry forward into future features.
+• **Real-data UI design** with Supabase made interfaces more dynamic  
+• **Clear frontend-backend communication** ensured proper data structure usage  
+• **Visual summaries** (activity/orders) significantly improved UX  
+• **Earlier TypeScript planning** would have prevented `any` type issues  
+• **Finalized mockups** before coding would reduce rework  
+• **Live updates** increased perceived system responsiveness  
 
 ---
 

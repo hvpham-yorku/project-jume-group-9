@@ -124,4 +124,13 @@
 20. **Switch From One Warehouse to an Entire different Warehouse (Multi-tenancy)**  
    - **User Story:** As a user, I can be from multiple warehouses and should be able to quickly swtich between warehouses and see the same dashboard for that warehouse inventory.
    - **Criteria of Satisfaction:**  
-     - Users can successfully sign-out from their current warehouse and change from one warehouse to another with every features available across all of them.   
+     - Users can successfully sign-out from their current warehouse and change from one warehouse to another with every features available across all of them.
+    
+
+## **8️⃣ Seeding and Testing**     
+21. **Staging data for 2 different inventories**  
+   - **User Story:** As a user, I can playaround and see the usage of my entire dashboard using fake data to test its capabilities.
+   - **Criteria of Satisfaction:**  
+     - Users can successfully play around with ordering, products, analytics and notification features with these databases.
+     - Products must have images, name, some quantity for testing
+     - Customers must have name, address, email, phone no, and location

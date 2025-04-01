@@ -132,5 +132,7 @@
    - **User Story:** As a user, I can playaround and see the usage of my entire dashboard using fake data to test its capabilities.
    - **Criteria of Satisfaction:**  
      - Users can successfully play around with ordering, products, analytics and notification features with these databases.
+     - Orders must have orderno, product id, fullfillment status, quantity
      - Products must have images, name, some quantity for testing
      - Customers must have name, address, email, phone no, and location
+     - At least 2 Organizations (meaning 2 warehouses)

@@ -57,3 +57,19 @@ _**4. Do you have any blockers?**_
 - No blockers, but still testing chart rendering edge cases (e.g., when there is no data).
 
 ---
+## **Friday [29/03/2025] - Sprint #2 Standup #4**
+
+_**1. What did you work on since the last standup?**_
+- Integrated Pie Chart for analytics, showing fulfilled vs unfulfilled orders.
+- Applied final styling to Recent Activity card and sidebar layout.
+- Team reviewed the final Home Page and fixed layout spacing and responsiveness.
+
+_**2. What do you commit to next?**_
+- Wrap up documentation, clean up any unused code, and prepare demo script.
+- Review Trello board to ensure all tasks are properly closed and linked to PRs.
+
+_**3. When do you think you'll be done?**_
+- Documentation and sprint review will be ready by April 2.
+
+_**4. Do you have any blockers?**_
+- No blockers, minor inconsistencies in chart behavior already addressed.

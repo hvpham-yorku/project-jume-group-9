@@ -7,7 +7,7 @@ March 20, 2025
 - Erfan (Home Page Developer)
 - Usman (Supabase Setup & Integration as well as documentation)
 - Jay (Orders Page Developer)
-- Max (UI integrator and User log-in authentication developer)
+- Max (UI integrator and backend developer)
 
 ---
 
@@ -60,4 +60,4 @@ March 20, 2025
 | Erfan        | Home Page UI, Sidebar, Chart, Weather, Profile Icon |
 | Jay       | Supabase Integration, Weather API |
 | Usman       | Orders Page Functionality, Modal, Table |
-| Max  | Website UI (as whole) and User log-in authentication |
+| Max  | Website UI (as whole) and backend/data |

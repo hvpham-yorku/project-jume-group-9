@@ -9,7 +9,7 @@ SmartStock is a full-stack, real-time inventory management system designed to he
 - **Frontend:** Next.js (React), Tailwind CSS, Shadcn UI
 - **Backend:** Supabase (PostgreSQL)
 - **Charts & Visuals:** Recharts
-- **Auth:** Supabase Auth (Role-based access control)
+- **Auth:** OAuth (Role-based access control)
 - **Version Control:** Git, GitHub
 
 ---

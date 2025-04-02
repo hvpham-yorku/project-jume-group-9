@@ -6,16 +6,26 @@ SmartStock is a full-stack, real-time inventory management system designed to he
 
 ## 🚀 Tech Stack
 
-- **Frontend:** Next.js (React), Tailwind CSS
+- **Frontend:** Next.js (React), Tailwind CSS, Shadcn UI
 - **Backend:** Supabase (PostgreSQL)
 - **Charts & Visuals:** Recharts
-- **Auth:** Oauth
+- **Auth:** Supabase Auth (Role-based access control)
 - **Version Control:** Git, GitHub
 
 ---
 
-## ✨ Key Features
-(pending)
+## ✨ Key Features & Breakdown
+
+| Feature Area                        | Description                                                                 | Assigned To           |
+|------------------------------------|-----------------------------------------------------------------------------|------------------------|
+| 🔐 **Authentication & Backend**    | Role-based login, multi-tenancy support, seeded database, pagination logic | Max                    |
+| 📦 **Orders & Products**           | CRUD for orders/products, fulfillment status, stock notifications          | Max, Jay               |
+| 👥 **Customers & Activity Logs**   | Manage customer info, log system updates to orders/products                 | Max, Nams              |
+| 🏠 **Home, Analytics & Profile**   | Dashboard UI, analytics charts, profile editor (with default avatar)       | Max, Erfan             |
+
+**UI Design System:** Built using Shadcn UI component library and Tailwind CSS for rapid styling.  
+**Data Sync:** Powered by Supabase for real-time updates across modules.
+
 ---
 
 ## ⚙️ Getting Started
@@ -47,10 +57,10 @@ npm run dev
 
 | Name              | Role & Responsibilities                            |
 |-------------------|-----------------------------------------------------|
-| **Erfan Razmand** | Home Page, Dashboard Charts, Weather Integration    |
-| **Jay Patel**     | Orders Module, Recent Activity Log                  |
-| **Max Eskandari** | Authentication, Backend, Multi-Tenancy, Seeding     |
-| **Usman Shahzad** | Product & Customer Module, UI Filtering             |
+| **Erfan Razmand** | Home Page, Analytics Charts, Profile Page           |
+| **Jay Patel**     | Orders Module, Product Updates                      |
+| **Max Eskandari** | Auth, Backend Logic, Seeding, Products, Customers   |
+| **Usman Shahzad** | Customer Module, Documentation, Testing             |
 
 ---
 
@@ -68,4 +78,3 @@ SmartStock is built with scalability and usability in mind:
 ## 📝 License
 
 This repository is for educational use only. Developed by Team JUME (2025).
-

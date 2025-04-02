@@ -59,7 +59,7 @@ _As an admin or manager, I want to view real-time dashboard statistics so that I
 
 ---
 
-### 2. Orders Management  
+### 2. Orders Management + Product UI  
 **User Stories:**  
 - _As a user, I want to create and manage orders so that I can fulfill customer requests._  
 - _As a user, I want to update fulfillment statuses and notify customers when orders are shipped._
@@ -70,7 +70,7 @@ _As an admin or manager, I want to view real-time dashboard statistics so that I
 - Implement dropdown for fulfillment status and checkbox for customer notification  
 - Ensure changes are updated in Supabase and logged in the activity feed  
 
-**Assignee:** Jay
+**Assignees:** Max, Jay
 
 ---
 
@@ -105,15 +105,28 @@ _As an admin or manager, I want to view real-time dashboard statistics so that I
 
 ---
 
+### 5. Activity Logging  
+**User Story:**  
+_As a manager, I want to view recent changes made to orders or products so that I can stay informed about all system activity._
+
+**Tasks:**  
+- Log relevant actions (create/update/delete) in Orders and Products  
+- Display a dynamic feed of logs on the Home page  
+- Ensure timestamps and actor information are captured  
+
+**Assignee:** Nams
+
+---
+
 ## ✅ Task Breakdown Assignments
 
 | Functional Area         | Team Members       | Description                                             |
 |--------------------------|--------------------|---------------------------------------------------------|
 | Home & Analytics         | Erfan              | Dashboard UI, statistics cards, Recharts integration    |
-| Orders Page              | Jay                | Orders table, create modal, fulfillment updates         |
-| Products & Customers     | Max, Usman         | CRUD UIs, access control, filtering                     |
-| Authentication & Backend | Max                | Auth setup, org seeding, table setup             |
-| Activity Logging         | Jay                | Track order/product changes and display recent updates  |
+| Products & Orders        | Max, Jay           | Product CRUD + Order create, update, notification       |
+| Customers Management     | Max, Usman         | Customer CRUD, filtering, role-based UI                |
+| Authentication & Backend | Max                | Auth logic, org seeding, Sadman Table setup             |
+| Activity Logging         | Nams               | Track and display product/order system changes          |
 
 ---
 

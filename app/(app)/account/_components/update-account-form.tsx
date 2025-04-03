@@ -63,8 +63,39 @@ export default function UpdateAccountForm({ user }: UpdateAccountFormProps) {
   } = form;
 
   async function onSubmit(formData: z.infer<typeof FormSchema>) {
-    console.log(formData);
-    //TODO push to subabase
+    try {
+      let imagePath = null;
+
+      // Handle image upload if there's a file
+      if (imageFile) {
+        const fileExt = imageFile.name.split(".").pop();
+        const fileName = `${handleize(formData.full_name)}-${uuidv4()}.${fileExt}`;
+        const filePath = `${fileName}`;
+
+        const { error: uploadError } = await supabase.storage.from("media").upload(filePath, imageFile);
+
+        if (uploadError) throw uploadError;
+        imagePath = filePath;
+      }
+
+      const updatedUser = await updateUser({
+        userId: user.id,
+        user: {
+          full_name: formData.full_name,
+          phone: formData.phone,
+          bio: formData.bio,
+          ...(!!imagePath && { avatar_url: imagePath }),
+        },
+      });
+
+      toast.success("Account Updated", { description: updatedUser.full_name });
+      router.push(`/account`);
+    } catch (error) {
+      console.error(error);
+      toast.error("Account Update Failed", {
+        description: error instanceof Error ? error.message : "Something went wrong. Try again.",
+      });
+    }
   }
 
   // Setup dropzone for image upload

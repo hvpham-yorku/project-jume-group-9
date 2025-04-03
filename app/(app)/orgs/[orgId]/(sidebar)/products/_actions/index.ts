@@ -29,3 +29,36 @@ export const createProduct = async ({ orgId, product }: CreateProductProps) => {
 
   return createdProduct;
 };
+
+/* -------------------------------------------------------------------------- */
+/*                                updateProduct                               */
+/* -------------------------------------------------------------------------- */
+interface UpdateProductProps {
+  orgId: string;
+  productId: string;
+  product: Database["public"]["Tables"]["products"]["Update"];
+}
+export const updateProduct = async ({ orgId, productId, product }: UpdateProductProps) => {
+  unstable_noStore();
+
+  const supabase = await createClient();
+
+  const { data: updatedProduct } = await supabase
+    .from("products")
+    .update(product)
+    .eq("id", productId)
+    .eq("org_id", orgId)
+    .select("*")
+    .single()
+    .throwOnError();
+
+  revalidateTag("products");
+
+  await addActivityLog({
+    orgId: orgId,
+    action: `Product: Update`,
+    description: `Product "${updatedProduct.name}" has been updated`,
+  });
+
+  return updatedProduct;
+};

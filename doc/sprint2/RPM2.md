@@ -69,7 +69,7 @@ To deliver a fully functional inventory and order management system for SmartSto
   - Stock summary (total orders, revenue, pending orders).  
   - Recent activity card with live updates.  
   - Pie chart showing pending vs fulfilled orders.  
-  - Compact weather widget.  
+  - ~Compact weather widget~ *(Deprioritized as it does not provide direct inventory value and was out of scope)*
   - Interactive sidebar with profile navigation.
 
   **User Stories:**  

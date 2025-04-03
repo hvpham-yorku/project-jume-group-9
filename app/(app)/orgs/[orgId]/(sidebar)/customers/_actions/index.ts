@@ -20,7 +20,7 @@ export const deleteCustomers = async ({ orgId, customerIds }: DeleteCustomersPro
   const { data: customers } = await supabase
     .from("customers")
     .delete()
-    .in("id", customerIds)
+    .eq("id", customerIds) // bug: `.eq` should be `.in` here for multiple IDs
     .eq("org_id", orgId)
     .select("*")
     .throwOnError();

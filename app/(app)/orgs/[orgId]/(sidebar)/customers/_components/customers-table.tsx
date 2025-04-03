@@ -1,52 +1,37 @@
-"use client"; // Enables client-side rendering for this component
+"use client";
 
-// Core components and utilities for the DataTable and UI
 import { DataTable } from "@/components/data-table";
 import { DataTableColumnHeader } from "@/components/data-table-column-header";
 import { DataTableToolbar } from "@/components/data-table-toolbar";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useDataTable } from "@/hooks/use-data-table";
 import { createClient } from "@/utils/supabase/client/client";
-
-// Icons for column meta UI representation
-import { Calendar, ChevronRight, Text } from "lucide-react";
-
-// Supabase data fetchers
+import { Calendar, ChevronRight, Text, Trash2, X } from "lucide-react";
 import { getCustomers, getCustomerCities, getCustomer } from "../_data";
-import { ColumnDef } from "@tanstack/react-table";
-
-// React & Next.js tools
-import { use, useMemo } from "react";
+import { ColumnDef, Table } from "@tanstack/react-table";
+import { use, useCallback, useMemo, useState, useTransition } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
-
-// UI components
 import { Button } from "@/components/ui/button";
+import { DataTableActionBarAction } from "@/components/data-table-action-bar";
 import { toast } from "sonner";
+import { deleteCustomers } from "../_actions";
+import { TooltipContent } from "@/components/ui/tooltip";
+import { DataTableActionBar } from "@/components/data-table-action-bar";
+import { Separator } from "@/components/ui/separator";
+import { Tooltip, TooltipTrigger } from "@/components/ui/tooltip";
 import { isPrivileged } from "@/lib/utils";
 import { OrgMember } from "@/types";
 
-/**
- * Infers the shape of a customer object from the Supabase data fetcher
- */
 type Customer = Awaited<ReturnType<typeof getCustomer>>["data"];
 
-/**
- * Props used to define the dynamic columns of the customer table
- */
 interface GetCustomersTableColumnsProps {
   orgId: string;
   cities: string[];
   orgMember: OrgMember;
 }
-
-/**
- * Defines column configuration for the Customers table.
- * Includes access control and UI metadata for filters/search/icons.
- */
 function getCustomersTableColumns({ orgId, cities, orgMember }: GetCustomersTableColumnsProps): ColumnDef<Customer>[] {
   return [
-    // Checkbox column for multi-select (only for privileged users)
     {
       id: "select",
       header: ({ table }) => (
@@ -67,10 +52,9 @@ function getCustomersTableColumns({ orgId, cities, orgMember }: GetCustomersTabl
       enableSorting: false,
       enableHiding: false,
       meta: {
-        permitted: isPrivileged(orgMember.role), // Only show for Admin/Manager
+        permitted: isPrivileged(orgMember.role),
       },
     },
-    // Name column with link to customer profile
     {
       id: "name",
       accessorKey: "name",
@@ -93,17 +77,18 @@ function getCustomersTableColumns({ orgId, cities, orgMember }: GetCustomersTabl
         icon: Text,
       },
     },
-    // City column, includes country if available
     {
       id: "city",
       accessorKey: "city",
       header: ({ column }) => <DataTableColumnHeader column={column} title="City" />,
-      cell: ({ row }) => (
-        <p>
-          <span>{row.original.city}</span>
-          {row.original.country && <span>, {row.original.country}</span>}
-        </p>
-      ),
+      cell: ({ row }) => {
+        return (
+          <p>
+            <span>{row.original.city}</span>
+            {row.original.country && <span>, {row.original.country}</span>}
+          </p>
+        );
+      },
       meta: {
         label: "City",
         variant: "multiSelect",
@@ -111,26 +96,38 @@ function getCustomersTableColumns({ orgId, cities, orgMember }: GetCustomersTabl
       },
       enableColumnFilter: true,
     },
-    // Email column (non-filterable, display only)
     {
       id: "email",
       accessorKey: "email",
       enableSorting: false,
       header: ({ column }) => <DataTableColumnHeader column={column} title="Email" />,
-      cell: ({ row }) => <span>{row.original.email}</span>,
+      cell: ({ row }) => {
+        const email = row.original.email;
+
+        return (
+          <div className="flex items-center">
+            <span>{email}</span>
+          </div>
+        );
+      },
       meta: {
         label: "Email",
       },
     },
-    // Created At date column, supports filtering by date range
     {
       id: "created_at",
       accessorKey: "created_at",
       enableHiding: false,
       header: ({ column }) => <DataTableColumnHeader column={column} title="Created At" />,
       cell: ({ row }) => {
-        const date = new Date(row.original.created_at);
-        return <span>{date.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}</span>;
+        const createdAt = row.original.created_at;
+        const date = new Date(createdAt);
+
+        return (
+          <div className="flex items-center">
+            {date.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
+          </div>
+        );
       },
       meta: {
         label: "Created At",
@@ -142,38 +139,23 @@ function getCustomersTableColumns({ orgId, cities, orgMember }: GetCustomersTabl
   ];
 }
 
-/**
- * Props required to render the CustomersTable component.
- * Uses server-side promises to preload customer data and city filters.
- */
 interface CustomersTableProps {
   orgMember: OrgMember;
   promises: Promise<[Awaited<ReturnType<typeof getCustomers>>, Awaited<ReturnType<typeof getCustomerCities>>]>;
 }
-
-/**
- * CustomersTable component
- * - Renders a fully featured customer table with filtering, pagination, and role-based access
- * - Uses TanStack Table, Supabase data, and role validation
- */
 export function CustomersTable({ orgMember, promises }: CustomersTableProps) {
   const { orgId } = useParams<{ orgId: string }>();
-  const [{ data, count, params }, cities] = use(promises); // Destructure data and filters from resolved promise
+  const [{ data, count, params }, cities] = use(promises);
 
-  // Dynamically build columns based on role and available cities
-  const columns = useMemo(
-    () => getCustomersTableColumns({ orgId, cities, orgMember }),
-    [orgId, cities, orgMember]
-  );
+  console.log({ params, cities });
 
-  // Initialize table logic with pagination, filtering, and column restrictions
+  const columns = useMemo(() => getCustomersTableColumns({ orgId, cities, orgMember }), [orgId, cities, orgMember]);
+
   const { table } = useDataTable({
     data,
-    columns: columns.filter((column) =>
-      column.meta?.permitted === undefined ? true : column.meta.permitted
-    ),
+    columns: columns.filter((column) => (column.meta?.permitted === undefined ? true : column.meta.permitted)),
     pageCount: count ? Math.ceil(count / params.perPage) : 0,
-    getRowId: (row) => row.id,
+    getRowId: (originalRow) => originalRow.id,
     shallow: false,
     clearOnDefault: true,
     initialState: {
@@ -184,9 +166,13 @@ export function CustomersTable({ orgMember, promises }: CustomersTableProps) {
     },
   });
 
+
   return (
     <div className="data-table-container w-full overflow-hidden">
-      <DataTable table={table}>
+      <DataTable
+        table={table}
+        actionBar={isPrivileged(orgMember.role) ? <CustomersTableActionBar table={table} /> : null}
+      >
         <DataTableToolbar table={table} />
       </DataTable>
     </div>
@@ -196,4 +182,84 @@ export function CustomersTable({ orgMember, promises }: CustomersTableProps) {
 /* -------------------------------------------------------------------------- */
 /*                           CustomersTableActionBar                          */
 /* -------------------------------------------------------------------------- */
-// TODO: Add multi-row deletion feature for privileged users (Admin/Manager)
+const actions = ["delete"] as const;
+
+type Action = (typeof actions)[number];
+
+interface CustomersTableActionBarProps {
+  table: Table<Customer>;
+}
+
+export function CustomersTableActionBar({ table }: CustomersTableActionBarProps) {
+  const { orgId } = useParams<{ orgId: string }>();
+  const rows = table.getFilteredSelectedRowModel().rows;
+  const [isPending, startTransition] = useTransition();
+  const [currentAction, setCurrentAction] = useState<Action | null>(null);
+
+  const getIsActionPending = useCallback(
+    (action: Action) => isPending && currentAction === action,
+    [isPending, currentAction],
+  );
+
+  const onCustomerDelete = useCallback(() => {
+    setCurrentAction("delete");
+    startTransition(async () => {
+      try {
+        const customers = await deleteCustomers({
+          orgId,
+          customerIds: rows.map((row) => row.original.id),
+        });
+
+        toast.success(`Customer${customers.length === 1 ? "" : "s"} Deleted`, {
+          description: `${customers.length} customer${customers.length === 1 ? "" : "s"} deleted`,
+        });
+      } catch (error) {
+        toast.error("Customer Deletion Failed", {
+          description: error instanceof Error ? error.message : "Something went wrong. Try again.",
+        });
+      } finally {
+        table.toggleAllRowsSelected(false);
+      }
+    });
+  }, [rows, table]);
+
+  return (
+    <DataTableActionBar table={table} visible={rows.length > 0}>
+      <div className="flex h-7 items-center rounded-md border pr-1 pl-2.5">
+        <span className="whitespace-nowrap text-xs">{rows.length} selected</span>
+        <Separator orientation="vertical" className="mr-1 ml-2 data-[orientation=vertical]:h-4" />
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="size-5 [&>svg]:size-3.5"
+              onClick={() => table.toggleAllRowsSelected(false)}
+            >
+              <X />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent className="flex items-center gap-2 border bg-accent px-2 py-1 font-semibold text-foreground dark:bg-zinc-900">
+            <p>Clear selection</p>
+            <kbd className="select-none rounded border bg-background px-1.5 py-px font-mono font-normal text-[0.7rem] text-foreground shadow-xs disabled:opacity-50">
+              <abbr title="Escape" className="no-underline">
+                Esc
+              </abbr>
+            </kbd>
+          </TooltipContent>
+        </Tooltip>
+      </div>
+      <Separator orientation="vertical" className="hidden data-[orientation=vertical]:h-5 sm:block" />
+      <div className="flex items-center gap-1.5">
+        <DataTableActionBarAction
+          size="icon"
+          tooltip="Delete customers"
+          isPending={getIsActionPending("delete")}
+          onClick={onCustomerDelete}
+        >
+          <Trash2 />
+        </DataTableActionBarAction>
+      </div>
+    </DataTableActionBar>
+  );
+}

@@ -170,9 +170,9 @@ export async function getOrdersQuantityRange({ supabase, orgId }: { supabase: Cl
     async () => {
       const { data: minData } = await supabase
         .from("orders")
-        .select("total")
+        .select("quantity")
         .eq("org_id", orgId)
-        .order("total", { ascending: true })
+        .order("quantity", { ascending: true })
         .limit(1)
         .single()
         .throwOnError();

@@ -79,12 +79,11 @@
 
 ---
 
-## **5️⃣ Inventory Tracking **
-13. **Generate Inventory**  
-   - **User Story:** As an admin/manager, I want to generate inventory movement reports so that I can track product flow in the warehouse.
+## **5️⃣ Inventory Tracking Reports**
+13. **Generate Inventory Report**  
+   - **User Story:** As an admin, I want to generate inventory movement reports so that I can track product flow in the warehouse.
    - **Criteria of Satisfaction:**  
      - Report includes total current inventory.
-     - Can be exported as CSV/PDF. 
 
 14. **Search Product Location**  
    - **User Story:** As an **admin/manager/employee**, I want to **search and filter for a product in the warehouse** so that **I can quickly retrieve it**.  

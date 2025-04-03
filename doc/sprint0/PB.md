@@ -61,18 +61,18 @@
 
 ---
 
-## **4️⃣ Supplier Management**
-10. **View Supplier List**  
+## **4️⃣ Customer Management**
+10. **View Customer List**  
    - **User Story:** As a admin/manager, I want to view a list of customer so that I can track where inventory comes from.
    - **Criteria of Satisfaction:**  
      - A list of customers with Name and Contact Information is displayed.
 
-11. **Add New Supplier**  
+11. **Add New Customer**  
    - **User Story:** As an admin/manager, I want to add new customer so that I can manage business relationships.
    - **Criteria of Satisfaction:**  
      - Admin/manager can add customer details (Name, Contact Info).
 
-12. **Edit Supplier Information**  
+12. **Edit Customer Information**  
    - **User Story:** As a admin/manager, I want to edit customer details so that I can keep information updated.  
    - **Criteria of Satisfaction:**  
      - Admin/managers can update customer contact information.

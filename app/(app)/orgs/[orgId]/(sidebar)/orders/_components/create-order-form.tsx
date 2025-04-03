@@ -21,6 +21,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Separator } from "@/components/ui/separator";
 import { createOrder } from "../_actions";
 
+// Validation rules for schema input
 const FormSchema = z.object({
   product_id: z.string().uuid(),
   quantity: z.coerce.number().min(1), // must be a number and greater than 0
@@ -127,6 +128,58 @@ export function CreateOrderForm(props: CreateOrderFormProps) {
                       Browse
                     </Button>
                   </div>
+
+                  {product && (
+                    <div className="border rounded-md">
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead className="w-full whitespace-nowrap">Product</TableHead>
+                            <TableHead className="w-[150px] whitespace-nowrap">Inventory</TableHead>
+                            <TableHead className="w-[150px] whitespace-nowrap">Threshold</TableHead>
+                            <TableHead className="w-[200px] whitespace-nowrap">Quantity</TableHead>
+                            <TableHead className="w-[150px] whitespace-nowrap">Total</TableHead>
+                            <TableHead className="text-right"></TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          <TableRow>
+                            <TableCell>
+                              <ProductItem product={product} />
+                            </TableCell>
+                            <TableCell>
+                              <span className="text-sm text-muted-foreground">{product?.inventory_quantity}</span>
+                            </TableCell>
+                            <TableCell>
+                              <span className="text-sm text-muted-foreground">{product?.restock_threshold}</span>
+                            </TableCell>
+                            <TableCell>
+                              <FormField
+                                control={form.control}
+                                name="quantity"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormControl>
+                                      <Input type="number" className="min-w-[100px]" min={1} {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                            </TableCell>
+                            <TableCell>
+                              <span className="text-sm text-muted-foreground">${total.toFixed(2)}</span>
+                            </TableCell>
+                            <TableCell className="text-right">
+                              <Button variant="ghost" size="icon" onClick={() => setProduct(null)}>
+                                <X className="h-4 w-4" />
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        </TableBody>
+                      </Table>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
 
@@ -192,6 +245,175 @@ export function CreateOrderForm(props: CreateOrderFormProps) {
         </form>
       </Form>
 
+      <ProductsModal open={open} setOpen={setOpen} product={product} setProduct={setProduct} />
+    </div>
+  );
+}
+
+interface ProductsModalProps {
+  open: boolean;
+  setOpen: (open: boolean) => void;
+  product?: Product | null;
+  setProduct: (product: Product | null) => void;
+}
+function ProductsModal({ open, setOpen, product, setProduct }: ProductsModalProps) {
+  const supabase = createClient();
+  const { orgId } = useParams<{ orgId: string }>();
+  const [loading, setLoading] = useState(false);
+  const [search, setSearch] = useState("");
+  const [products, setProducts] = useState<Product[]>([]);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
+
+  // debounce search
+  const deferredSearch = useDeferredValue(search);
+
+  async function getAllProducts() {
+    if (!orgId) return;
+
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+
+    const ac = new AbortController();
+    abortControllerRef.current = ac;
+
+    try {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from("products")
+        .select("*, customer:customers(id, name, email)")
+        .eq("org_id", orgId)
+        .order("name", { ascending: true })
+        .limit(100)
+        .ilike("name", `%${deferredSearch}%`)
+        .abortSignal(ac.signal);
+
+      console.log({ data, error });
+
+      if (!data || error) throw error;
+
+      setProducts(data);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    if (!open) return;
+
+    getAllProducts();
+
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
+  }, [open, deferredSearch]);
+
+  useEffect(() => {
+    if (open && searchInputRef.current) {
+      searchInputRef.current.focus();
+    }
+  }, [open]);
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader className="space-y-4">
+          <DialogTitle>All Products</DialogTitle>
+          <div className="relative flex-1">
+            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Input
+              ref={searchInputRef}
+              type="search"
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search products"
+              className="pl-8"
+            />
+          </div>
+        </DialogHeader>
+        <div className="grid content-start  border-y overflow-y-auto h-[30rem]">
+          {loading &&
+            Array.from({ length: 10 }).map((_, index) => (
+              <div key={index} className="p-4 flex gap-2 items-center border-b w-full">
+                <ProductItemSkeleton />
+              </div>
+            ))}
+          {!loading &&
+            products.map((prod) => (
+              <div
+                key={prod.id}
+                className="p-4 flex justify-between gap-2 cursor-pointer transition-all hover:bg-muted/50 data-[state=selected]:bg-muted items-center border-b w-full"
+                data-state={prod.id === product?.id ? "selected" : "unselected"}
+                onClick={() => setProduct(prod.id === product?.id ? null : prod)}
+              >
+                <ProductItem product={prod} />
+                {prod.id === product?.id && <Check className="size-4" />}
+              </div>
+            ))}
+          {!loading && products.length === 0 && (
+            <div className="p-4 flex flex-col gap-2 items-center size-full justify-center">
+              <p className="text-sm text-muted-foreground">No products found</p>
+            </div>
+          )}
+        </div>
+        <DialogFooter>
+          <Button variant="outline" onClick={() => setOpen(false)}>
+            Cancel
+          </Button>
+          <Button onClick={() => setOpen(false)} disabled={!product}>
+            Add
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function ProductItem({ product }: { product: Product }) {
+  const supabase = createClient();
+  const image = product.image ? supabase.storage.from("media").getPublicUrl(product.image).data.publicUrl : null;
+
+  return (
+    <div className="flex items-center gap-2">
+      <div className="size-12 rounded overflow-hidden bg-white text-muted-foreground p-1 border">
+        <div className="relative size-full flex items-center justify-center">
+          {image ? (
+            <Image
+              src={`${image}?width=100&height=100`}
+              alt={product.name}
+              fill
+              unoptimized
+              className="object-contain"
+            />
+          ) : (
+            <ImageIcon className="size-4" />
+          )}
+        </div>
+      </div>
+      <div className="flex flex-col">
+        <p className="max-w-full text-sm truncate">{product.name}</p>
+        <p className="text-xs text-muted-foreground">
+          {product.customer.name} • ${product.price}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function ProductItemSkeleton() {
+  return (
+    <div className="flex items-center gap-2 animate-pulse">
+      <div className="size-12 flex items-center justify-center rounded overflow-hidden bg-muted text-muted-foreground p-1 border">
+        <ImageIcon className="size-4" />
+      </div>
+      <div className="flex flex-col gap-1">
+        <div className="h-3 w-32 bg-muted rounded" />
+        <div className="h-3 w-16 bg-muted rounded" />
+      </div>
     </div>
   );
 }

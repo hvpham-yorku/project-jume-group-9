@@ -62,3 +62,34 @@ export const updateOrder = async ({ orgId, orderId, order }: UpdateOrderProps) =
 
   return updatedOrder;
 };
+
+/* -------------------------------------------------------------------------- */
+/*                                deleteOrders                                */
+/* -------------------------------------------------------------------------- */
+interface DeleteOrdersProps {
+  orgId: string;
+  orderIds: string[];
+}
+export const deleteOrders = async ({ orgId, orderIds }: DeleteOrdersProps) => {
+  unstable_noStore();
+
+  const supabase = await createClient();
+
+  const { data: orders } = await supabase
+    .from("orders")
+    .delete()
+    .in("id", orderIds)
+    .eq("org_id", orgId)
+    .select("*")
+    .throwOnError();
+
+  revalidateTag("orders");
+
+  await addActivityLog({
+    orgId: orgId,
+    action: "Orders: Delete",
+    description: `Orders deleted. List of orders: ${orders.map((order) => order.order_number).join(", ")}`,
+  });
+
+  return orders;
+};

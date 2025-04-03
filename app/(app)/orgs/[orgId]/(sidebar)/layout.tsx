@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
-import { getUser, getOrgs, getOrgMember } from "@/app/data";
+import { getOrgs, getOrgMember } from "@/app/data";
 
 interface LayoutProps {
   children: React.ReactNode;

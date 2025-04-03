@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 };
 
 export default async function CreateCustomerPage(props: CreateCustomerPageProps) {
-  const { orgId } = props.params; // This will break since `props.params` was a Promise originally
+  const { orgId } = await props.params;
 
   const orgMember = await getOrgMember({ orgId });
   if (!isPrivileged(orgMember.role)) {

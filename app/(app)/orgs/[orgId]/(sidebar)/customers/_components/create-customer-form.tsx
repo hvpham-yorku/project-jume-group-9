@@ -1,18 +1,27 @@
-"use client";
+"use client"; // Enables client-side rendering in Next.js
 
+// Importing validation and form libraries
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
+// Toast notifications
 import { toast } from "sonner";
+
+// UI components
 import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Form, FormControl, FormField, FormItem, FormLabel, FormMessage
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useParams, useRouter } from "next/navigation";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+
+// API action for customer creation
 import { createCustomer } from "../_actions";
 
+// Zod schema for validating form inputs
 const FormSchema = z.object({
   name: z.string().min(1, "Name is required"),
   email: z.string().email("Invalid email address"),
@@ -31,8 +40,9 @@ const FormSchema = z.object({
 
 export function CreateCustomerForm() {
   const router = useRouter();
-  const { orgId } = useParams<{ orgId: string }>();
+  const { orgId } = useParams<{ orgId: string }>(); // Extract organization ID from URL
 
+  // Initialize the form with validation and default values
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     mode: "onChange",
@@ -54,8 +64,10 @@ export function CreateCustomerForm() {
     formState: { isValid, isSubmitting },
   } = form;
 
+  // Submit handler for form
   async function onSubmit(formData: z.infer<typeof FormSchema>) {
     try {
+      // Call backend action to create customer
       const createdCustomer = await createCustomer({
         orgId,
         customer: {
@@ -73,6 +85,7 @@ export function CreateCustomerForm() {
         },
       });
 
+      // Show success message and redirect to customer page
       toast.success("Customer Created", { description: createdCustomer.name });
       router.push(`/orgs/${orgId}/customers/${createdCustomer.id}`);
     } catch (error) {
@@ -85,8 +98,10 @@ export function CreateCustomerForm() {
 
   return (
     <div className="w-full container">
+      {/* Form wrapper */}
       <Form {...form}>
         <form className="grid p-8 gap-4" onSubmit={form.handleSubmit(onSubmit)}>
+          {/* Header with back button and Save button */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Button type="button" variant="ghost" size="icon" onClick={() => router.back()}>
@@ -99,11 +114,13 @@ export function CreateCustomerForm() {
             </Button>
           </div>
 
+          {/* Customer Information Card */}
           <Card>
             <CardHeader>
               <h2 className="text-base font-semibold">Customer Information</h2>
             </CardHeader>
             <CardContent className="space-y-4">
+              {/* Name field */}
               <FormField
                 control={form.control}
                 name="name"
@@ -118,7 +135,9 @@ export function CreateCustomerForm() {
                 )}
               />
 
+              {/* Grid of form fields */}
               <div className="grid grid-cols-2 gap-4">
+                {/* Email */}
                 <FormField
                   control={form.control}
                   name="email"
@@ -132,6 +151,8 @@ export function CreateCustomerForm() {
                     </FormItem>
                   )}
                 />
+
+                {/* Phone */}
                 <FormField
                   control={form.control}
                   name="phone"
@@ -145,6 +166,8 @@ export function CreateCustomerForm() {
                     </FormItem>
                   )}
                 />
+
+                {/* Address */}
                 <FormField
                   control={form.control}
                   name="address"
@@ -158,6 +181,8 @@ export function CreateCustomerForm() {
                     </FormItem>
                   )}
                 />
+
+                {/* City */}
                 <FormField
                   control={form.control}
                   name="city"
@@ -171,6 +196,8 @@ export function CreateCustomerForm() {
                     </FormItem>
                   )}
                 />
+
+                {/* Region */}
                 <FormField
                   control={form.control}
                   name="region"
@@ -184,6 +211,8 @@ export function CreateCustomerForm() {
                     </FormItem>
                   )}
                 />
+
+                {/* Region Code */}
                 <FormField
                   control={form.control}
                   name="region_code"
@@ -198,6 +227,7 @@ export function CreateCustomerForm() {
                   )}
                 />
 
+                {/* Country */}
                 <FormField
                   control={form.control}
                   name="country"
@@ -211,6 +241,8 @@ export function CreateCustomerForm() {
                     </FormItem>
                   )}
                 />
+
+                {/* Country Code */}
                 <FormField
                   control={form.control}
                   name="country_code"
@@ -225,6 +257,7 @@ export function CreateCustomerForm() {
                   )}
                 />
 
+                {/* Postal Code */}
                 <FormField
                   control={form.control}
                   name="postal_code"

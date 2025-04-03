@@ -52,7 +52,7 @@ _As an admin or manager, I want to view real-time dashboard statistics so that I
 **Tasks:**  
 - Display total stock, low stock alerts, total revenue, and recent system activity  
 - Connect Recharts PieChart to Supabase  
-- Add weather widget integration  
+- ~Add weather widget integration~ *(Deprioritized as it does not provide direct inventory value and was out of scope)* 
 - Design and implement the Recent Activity feed (linked to Supabase updates)  
 
 **Assignee:** Erfan

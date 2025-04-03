@@ -24,11 +24,13 @@ export default async function CreateOrderPage(props: CreateOrderPageProps) {
   const { orgId } = await props.params;
   const searchParams = await props.searchParams;
 
+  // Check to see if organization member is priveleged or not
   const orgMember = await getOrgMember({ orgId });
   if (!isPrivileged(orgMember.role)) {
     redirect(`/orgs/${orgId}/orders`);
   }
 
+  // Check for product ID, and if there is, auto fill create order form
   let product: Product | undefined;
   if (searchParams.product) {
     const supabase = await createClient();

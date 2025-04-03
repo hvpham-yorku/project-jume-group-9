@@ -29,3 +29,36 @@ export const createOrder = async ({ orgId, order }: CreateOrderProps) => {
 
   return createdOrder;
 };
+
+/* -------------------------------------------------------------------------- */
+/*                                 updateOrder                                */
+/* -------------------------------------------------------------------------- */
+interface UpdateOrderProps {
+  orgId: string;
+  orderId: string;
+  order: Database["public"]["Tables"]["orders"]["Update"];
+}
+export const updateOrder = async ({ orgId, orderId, order }: UpdateOrderProps) => {
+  unstable_noStore();
+
+  const supabase = await createClient();
+
+  const { data: updatedOrder } = await supabase
+    .from("orders")
+    .update(order)
+    .eq("id", orderId)
+    .eq("org_id", orgId)
+    .select("*")
+    .single()
+    .throwOnError();
+
+  revalidateTag("orders");
+
+  await addActivityLog({
+    orgId: orgId,
+    action: "Order: Update",
+    description: `Order "${updatedOrder.order_number}" has been updated.`,
+  });
+
+  return updatedOrder;
+};

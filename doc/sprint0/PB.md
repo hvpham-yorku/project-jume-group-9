@@ -85,7 +85,7 @@
    - **Criteria of Satisfaction:**  
      - Report includes total current inventory.
 
-14. **Search Product Location**  
+14. **Search Product**  
    - **User Story:** As an **admin/manager/employee**, I want to **search and filter for a product in the warehouse** so that **I can quickly retrieve it**.  
    - **Criteria of Satisfaction:**  
      - Search must return the product or products mentioned.

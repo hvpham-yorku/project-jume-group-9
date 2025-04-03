@@ -1,3 +1,5 @@
+
+
 # 📦 SmartStock – Inventory Management System
 
 SmartStock is a full-stack, real-time inventory management system designed to help warehouse teams manage orders, products, customers, and analytics efficiently. Built with modular architecture and real-time integration, SmartStock simplifies stock tracking across multiple warehouses with support for role-based access and modern UI features.
@@ -71,10 +73,12 @@ SmartStock is built with scalability and usability in mind:
 - Real-time data sync with Supabase
 - UI access control based on user role
 - Filtered views and forms based on warehouse context
-- Designed for internal teams in logistics, retail, or warehouse environments
+- Designed for internal teams in logistics, retail, or warehouse environments doc/sprint0/logo.png
 
 ---
 
 ## 📝 License
-
-This repository is for educational use only. Developed by Team JUME (2025).
+<div style="display: flex; justify-content: space-between; align-items: center;">
+  <p>This repository is for educational use only. Developed by Team JUME (2025).</p>
+  <img src="doc/sprint0/logo.png" alt="JUME Logo" width="100"/>
+</div>

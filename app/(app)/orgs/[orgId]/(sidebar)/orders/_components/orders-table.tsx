@@ -273,13 +273,11 @@ export function OrdersTable({ orgMember, promises }: OrdersTableProps) {
 
   return (
     <div className="data-table-container w-full overflow-hidden">
-      <DataTable table={table}>
+      <DataTable table={table} actionBar={isPrivileged(orgMember.role) ? <OrdersTableActionBar table={table} /> : null}>
         <DataTableToolbar table={table} />
       </DataTable>
     </div>
-  );
-}
-
+  )
 
 /* -------------------------------------------------------------------------- */
 /*                            OrdersTableActionBar                            */

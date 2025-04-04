@@ -7,16 +7,22 @@ import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useDataTable } from "@/hooks/use-data-table";
 import { createClient } from "@/utils/supabase/client/client";
-import { Calendar, DollarSign, Text } from "lucide-react";
+import { ArrowUp, Calendar, CheckCircle2, DollarSign, Download, Text, Trash2, X } from "lucide-react";
 import { getProducts, getProductsCategories, getProductsInventoryQuantityRange, getProductsPriceRange } from "../_data";
-import { ColumnDef } from "@tanstack/react-table";
+import { ColumnDef, Table } from "@tanstack/react-table";
 import { ImageIcon } from "lucide-react";
 import Image from "next/image";
-import { use, useMemo } from "react";
+import { use, useCallback, useMemo, useState, useTransition } from "react";
 import { FaCircle } from "react-icons/fa";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { DataTableActionBarAction } from "@/components/data-table-action-bar";
+import { DataTableActionBar } from "@/components/data-table-action-bar";
+import { toast } from "sonner";
+import { deleteProducts, updateProductsStatus } from "../_actions";
+import { Separator } from "@/components/ui/separator";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { isPrivileged } from "@/lib/utils";
 import { OrgMember } from "@/types";
 
@@ -262,9 +268,145 @@ export function ProductsTable({ orgMember, promises }: ProductsTableProps) {
     <div className="data-table-container w-full overflow-hidden">
       <DataTable
         table={table}
+        actionBar={isPrivileged(orgMember.role) ? <ProductsTableActionBar table={table} /> : null}
       >
         <DataTableToolbar table={table} />
       </DataTable>
     </div>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+/*                           ProductsTableActionBar                           */
+/* -------------------------------------------------------------------------- */
+const actions = ["update-status:active", "update-status:draft", "update-status:archived", "delete"] as const;
+
+type Action = (typeof actions)[number];
+
+interface ProductsTableActionBarProps {
+  table: Table<Product>;
+}
+
+function ProductsTableActionBar({ table }: ProductsTableActionBarProps) {
+  const { orgId } = useParams<{ orgId: string }>();
+  const rows = table.getFilteredSelectedRowModel().rows;
+  const [isPending, startTransition] = useTransition();
+  const [currentAction, setCurrentAction] = useState<Action | null>(null);
+
+  const getIsActionPending = useCallback(
+    (action: Action) => isPending && currentAction === action,
+    [isPending, currentAction],
+  );
+
+  const onProductStatusUpdate = useCallback(
+    ({ value }: { value: Product["status"] }) => {
+      setCurrentAction(`update-status:${value}`);
+      startTransition(async () => {
+        try {
+          const products = await updateProductsStatus({
+            orgId,
+            productIds: rows.map((row) => row.original.id),
+            status: value,
+          });
+
+          toast.success(`Product${products.length === 1 ? "" : "s"} Status Updated`, {
+            description: `${products.length} product${products.length === 1 ? "" : "s"} status updated to ${value}`,
+          });
+        } catch (error) {
+          toast.error("Product Status Update Failed", {
+            description: error instanceof Error ? error.message : "Something went wrong. Try again.",
+          });
+        } finally {
+          table.toggleAllRowsSelected(false);
+        }
+      });
+    },
+    [table, rows],
+  );
+
+  const onProductDelete = useCallback(() => {
+    setCurrentAction("delete");
+    startTransition(async () => {
+      try {
+        const products = await deleteProducts({
+          orgId,
+          productIds: rows.map((row) => row.original.id),
+        });
+
+        toast.success(`Product${products.length === 1 ? "" : "s"} Deleted`, {
+          description: `${products.length} product${products.length === 1 ? "" : "s"} deleted`,
+        });
+      } catch (error) {
+        toast.error("Product Deletion Failed", {
+          description: error instanceof Error ? error.message : "Something went wrong. Try again.",
+        });
+      } finally {
+        table.toggleAllRowsSelected(false);
+      }
+    });
+  }, [rows, table]);
+
+  return (
+    <DataTableActionBar table={table} visible={rows.length > 0}>
+      <div className="flex h-7 items-center rounded-md border pr-1 pl-2.5">
+        <span className="whitespace-nowrap text-xs">{rows.length} selected</span>
+        <Separator orientation="vertical" className="mr-1 ml-2 data-[orientation=vertical]:h-4" />
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="size-5 [&>svg]:size-3.5"
+              onClick={() => table.toggleAllRowsSelected(false)}
+            >
+              <X />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent className="flex items-center gap-2 border bg-accent px-2 py-1 font-semibold text-foreground dark:bg-zinc-900">
+            <p>Clear selection</p>
+            <kbd className="select-none rounded border bg-background px-1.5 py-px font-mono font-normal text-[0.7rem] text-foreground shadow-xs disabled:opacity-50">
+              <abbr title="Escape" className="no-underline">
+                Esc
+              </abbr>
+            </kbd>
+          </TooltipContent>
+        </Tooltip>
+      </div>
+      <Separator orientation="vertical" className="hidden data-[orientation=vertical]:h-5 sm:block" />
+      <div className="flex items-center gap-1.5">
+        <DataTableActionBarAction
+          size="icon"
+          tooltip="Status: Active"
+          isPending={getIsActionPending("update-status:active")}
+          onClick={() => onProductStatusUpdate({ value: "active" })}
+        >
+          <FaCircle className="size-[0.8em] text-green-400" />
+        </DataTableActionBarAction>
+        <DataTableActionBarAction
+          size="icon"
+          tooltip="Status: Draft"
+          isPending={getIsActionPending("update-status:draft")}
+          onClick={() => onProductStatusUpdate({ value: "draft" })}
+        >
+          <FaCircle className="size-[0.8em] text-cyan-300" />
+        </DataTableActionBarAction>
+        <DataTableActionBarAction
+          size="icon"
+          tooltip="Status: Archived"
+          isPending={getIsActionPending("update-status:archived")}
+          onClick={() => onProductStatusUpdate({ value: "archived" })}
+        >
+          <FaCircle className="size-[0.8em] text-orange-500" />
+        </DataTableActionBarAction>
+        <DataTableActionBarAction
+          size="icon"
+          tooltip="Delete products"
+          isPending={getIsActionPending("delete")}
+          onClick={onProductDelete}
+        >
+          <Trash2 />
+        </DataTableActionBarAction>
+      </div>
+    </DataTableActionBar>
   );
 }

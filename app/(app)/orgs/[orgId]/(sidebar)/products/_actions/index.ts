@@ -6,6 +6,69 @@ import { Database } from "@/utils/supabase/types";
 import { revalidateTag, unstable_noStore } from "next/cache";
 
 /* -------------------------------------------------------------------------- */
+/*                            updateProductsStatus                            */
+/* -------------------------------------------------------------------------- */
+interface UpdateProductsStatusProps {
+  orgId: string;
+  productIds: string[];
+  status: Database["public"]["Enums"]["product_status"];
+}
+export const updateProductsStatus = async ({ orgId, productIds, status }: UpdateProductsStatusProps) => {
+  unstable_noStore();
+
+  const supabase = await createClient();
+
+  const { data: products } = await supabase
+    .from("products")
+    .update({ status })
+    .in("id", productIds)
+    .eq("org_id", orgId)
+    .select("*")
+    .throwOnError();
+
+  revalidateTag("products");
+
+  await addActivityLog({
+    orgId: orgId,
+    action: `Products: Update Status To ${status.toUpperCase()}`,
+    description: `Product status updated to ${status} for ${products.length} products. List of products: ${products.map((product) => product.name).join(", ")}`,
+  });
+
+  return products;
+};
+
+/* -------------------------------------------------------------------------- */
+/*                               deleteProducts                               */
+/* -------------------------------------------------------------------------- */
+interface DeleteProductsProps {
+  orgId: string;
+  productIds: string[];
+}
+export const deleteProducts = async ({ orgId, productIds }: DeleteProductsProps) => {
+  unstable_noStore();
+
+  const supabase = await createClient();
+
+  const { data: products } = await supabase
+    .from("products")
+    .delete()
+    .in("id", productIds)
+    .eq("org_id", orgId)
+    .select("*")
+    .throwOnError();
+
+  revalidateTag("products");
+
+  await addActivityLog({
+    orgId: orgId,
+    action: `Products: Delete`,
+    description: `Products deleted. List of products: ${products.map((product) => product.name).join(", ")}`,
+  });
+
+  return products;
+};
+
+/* -------------------------------------------------------------------------- */
 /*                                createProduct                               */
 /* -------------------------------------------------------------------------- */
 interface CreateProductProps {

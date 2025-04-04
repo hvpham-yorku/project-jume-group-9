@@ -15,11 +15,15 @@
   - The home page loads instantly without requiring manual refresh or navigation.
  
 ## **2️⃣ User Authentication & Role Management**
-3. **User Login & Authentication**  
-   - **User Story:** As a user, I want to log in securely so that I can access my permitted features based on my role. 
-   - **Criteria of Satisfaction:**  
-     - Users can sign-in and sign-up using OAuth and sign-out.
-     - Role-based access must be enforced (Admin, Manager, Employee) on each warehouse dashboard. 
+2. **Inventory & Order Insights**
+- **User Story:** As a user, I want quick visual insights into customer-held inventory, order statuses, and product lifecycle to make better decisions.
+- **Criteria of Satisfaction:**
+  - A table shows **inventory held by each customer** with total quantities.
+  - A **pie chart** shows the distribution of order statuses (`fulfilled`, `pending`, `cancelled`).
+  - A **chart** shows product status breakdown (`active`, `draft`, `archived`).
+  - Data must be scoped to the current organization (RLS protected).
+  - If no data exists, helpful empty states must be shown.
+  - All charts load fast and reflect real-time data.
 
 
 ## **3️⃣ User Authentication & Role Management**

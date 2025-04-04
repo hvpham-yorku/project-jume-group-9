@@ -1,0 +1,19 @@
+{
+  "eslint.workingDirectories": [
+    {
+      "mode": "auto"
+    }
+  ],
+  "explorer.compactFolders": false,
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "workbench.editor.customLabels.patterns": {
+    "**/app/**/layout.tsx": "${dirname} - ${filename}.${extname}",
+    "**/app/**/page.tsx": "${dirname} - ${filename}.${extname}",
+    "**/app/**/loading.tsx": "${dirname} - ${filename}.${extname}",
+    "**/app/**/not-found.tsx": "${dirname} - ${filename}.${extname}",
+    "**/app/**/error.tsx": "${dirname} - ${filename}.${extname}",
+    "**/app/**/route.ts": "${dirname} - ${filename}.${extname}",
+    "**/app/**/template.tsx": "${dirname} - ${filename}.${extname}",
+    "**/*.{tsx,ts}": "${dirname} - ${filename}.${extname}"
+  }
+}

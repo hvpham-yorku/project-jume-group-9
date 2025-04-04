@@ -14,7 +14,7 @@
   - All displayed data must follow RLS and only show what's allowed for the logged-in user.
   - The home page loads instantly without requiring manual refresh or navigation.
  
-## **2️⃣ User Authentication & Role Management**
+## **2️⃣ Analytics**
 2. **Inventory & Order Insights**
 - **User Story:** As a user, I want quick visual insights into customer-held inventory, order statuses, and product lifecycle to make better decisions.
 - **Criteria of Satisfaction:**

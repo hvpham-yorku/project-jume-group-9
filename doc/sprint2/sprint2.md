@@ -1,139 +1,112 @@
-# 📅 Sprint 2 Planning Meetings
+# Release Planning Meetings  
+**Wednesday, March 26, 2025 @5:00 PM (In-person Lab)**
 
-**Date:** Wednesday, March 20, 2025 @5:00 PM (In-person Lab)  
-**Team Name:** JUME  
-**Participants:** Usman Shahzad, Max Eskandari, Jay Patel, Erfan Razmand  
-
-**Team Capacity:** Each team member has allocated approximately **25–30 hours** for Sprint 2.
+##### Product Owner: Erfan Razmand
 
 ---
 
-## 🎯 Sprint Goal
+## Release Goal  
+The goal of Sprint 2 is to finish the remaining features for **SmartStock**, the inventory and order management system, and make sure everything connects properly to **Supabase**. This includes finalizing the main structure, adding multi-tenancy, role-based access, and improving the user interface with real-time data and analytics.
 
-The objective of Sprint 2 is to complete the core functionalities of the SmartStock Inventory Management System and ensure seamless real-time data interaction via Supabase. This includes full implementation of the **Orders, Products, Customers, Analytics**, and **Recent Activity Logging** modules.
+**Focus Areas:**
 
-Additional focus areas include:
-- Enhancing dashboard visualizations
-- Finalizing role-based UI filtering
-- Enabling seeded demo data for multiple warehouses
-- Delivering a smooth user experience across all authenticated roles
+- **Orders Page**  
+  - Create, update, and track customer orders in real-time.
 
----
+- **Product Inventory**  
+  - Manage product listings and stock levels, and set up restock alerts.
 
-## 🔍 Identified Spikes
+- **Home Page**  
+  - Show current stock, orders, and recent activities.
 
-### 1. Supabase Real-Time Syncing  
-> Implement real-time updates for Orders and Products across all pages.
-
-### 2. Chart Integration (Recharts)  
-> Dynamically render live analytics by connecting Recharts to Supabase data.
-
-### 3. Activity Logging System  
-> Design a log system to track and display changes made to orders and products.
-
-### 4. Multi-Warehouse Seeding  
-> Develop a strategy to seed demo data for two separate organizations with isolated inventories.
-
-### 5. Role-Based Access Filtering  
-> Enforce user-specific access control for Admins, Managers, and Employees.
+- **Analytics Page**  
+  - Display charts for order and stock performance over time.
 
 ---
 
-## 📌 Decisions About User Stories
+## Scope of the Project: Epics and Key Features  
 
-The following user stories have been selected for Sprint 2 based on our backlog priorities:
+**1. Orders Management Epic**  
+*Goal:* Allow admins to manage customer orders through an easy-to-use interface.
 
----
+  **Key Features:**  
+  - View orders in a table format.  
+  - Create and update orders.  
+  - Track order status (fulfilled, pending, etc.).  
+  - Search for orders.
 
-### 1. Home Dashboard Enhancements  
-**User Story:**  
-_As an admin or manager, I want to view real-time dashboard statistics so that I can monitor stock levels and order performance at a glance._
-
-**Tasks:**  
-- Display total stock, low stock alerts, total revenue, and recent system activity  
-- Connect Recharts PieChart to Supabase  
-- ~Add weather widget integration~ *(Deprioritized as it does not provide direct inventory value and was out of scope)* 
-- Design and implement the Recent Activity feed (linked to Supabase updates)  
-
-**Assignee:** Erfan
+  **User Stories:**  
+  - As an admin, I can view and manage all orders.  
+  - As an admin, I can create and update orders.
 
 ---
 
-### 2. Orders Management + Product UI  
-**User Stories:**  
-- _As a user, I want to create and manage orders so that I can fulfill customer requests._  
-- _As a user, I want to update fulfillment statuses and notify customers when orders are shipped._
+**2. Product & Inventory Management Epic**  
+*Goal:* Manage the products in the inventory, including adding, editing, and viewing products.
 
-**Tasks:**  
-- Create Orders table UI with filter/search functionality  
-- Design a modal for creating new orders  
-- Implement dropdown for fulfillment status and checkbox for customer notification  
-- Ensure changes are updated in Supabase and logged in the activity feed  
+  **Key Features:**  
+  - Add new products to the inventory.  
+  - Edit product details.  
+  - Search and filter products.
 
-**Assignees:** Max, Jay
+  **User Stories:**  
+  - As an admin, I can add, edit, and view products.
 
 ---
 
-### 3. Product & Customer Management  
-**User Stories:**  
-- _As an employee, I want to view products to check availability._  
-- _As an admin/manager, I want to add, edit, or delete products to maintain inventory accuracy._  
-- _As an admin/manager, I want to manage customer records for smooth fulfillment and communication._
+**3. Home Page & Activity Epic**  
+*Goal:* Show key stock data and recent activities in one place.
 
-**Tasks:**  
-- Create UI for Product and Customer views  
-- Add CRUD functionality via Supabase integration  
-- Implement role-based UI behavior (read-only for Employees)  
-- Add filtering and search controls  
+  **Key Features:**  
+  - Display stock summary (orders, inventory levels).  
+  - Show recent activities.  
+  - Show a pie chart of pending vs. fulfilled orders.  
 
-**Assignees:** Max, Usman
+  **User Stories:**  
+  - As a user, I can view stock levels and recent activities.
 
 ---
 
-### 4. Authentication, Backend, Seeding  
-**User Stories:**  
-- _As a user, I want to securely log in and only access features appropriate for my role._  
-- _As a user, I want to test the system with sample data to better understand its features._
+**4. Analytics Page Epic**  
+*Goal:* Show data in charts to help with decision-making.
 
-**Tasks:**  
-- Implement role-based UI filtering (Admin, Manager, Employee)  
-- Seed Supabase with demo data for 2 warehouses (Products, Orders, Customers)  
-- Build multi-tenancy switching logic  
-- Apply Sadman Table conventions for pagination, filtering, and organization scoping  
+  **Key Features:**  
+  - Display performance data for orders and stock over time.  
+  - Use charts to show trends.
 
-**Assignee:** Max
+  **User Stories:**  
+  - As a user, I can view performance data for orders and stock.
 
 ---
 
-### 5. Activity Logging  
-**User Story:**  
-_As a manager, I want to view recent changes made to orders or products so that I can stay informed about all system activity._
+## Task Breakdown Assignments  
 
-**Tasks:**  
-- Log relevant actions (create/update/delete) in Orders and Products  
-- Display a dynamic feed of logs on the Home page  
-- Ensure timestamps and actor information are captured  
-
-**Assignee:** Nams
-
----
-
-## ✅ Task Breakdown Assignments
-
-| Functional Area         | Team Members       | Description                                             |
-|--------------------------|--------------------|---------------------------------------------------------|
-| Home & Analytics         | Erfan              | Dashboard UI, statistics cards, Recharts integration    |
-| Products & Orders        | Max, Jay           | Product CRUD + Order create, update, notification       |
-| Customers Management     | Max, Usman         | Customer CRUD, filtering, role-based UI                |
-| Authentication & Backend | Max                | Auth logic, org seeding, Sadman Table setup             |
-| Activity Logging         | Nams               | Track and display product/order system changes          |
+| Functional Area           | Team Members     | Description                                                    |
+|--------------------------|------------------|----------------------------------------------------------------|
+| Auth + Backend            | Max              | Set up authentication, multi-tenancy, and connect to database |
+| Home Page + Analytics     | Max              | Build dashboard, show activity feed, display real-time data    |
+| Orders Page + Products    | Max, Jay         | Manage orders and products, set up notifications, track fulfillment |
+| Activity Log + Docs       | Max, Nams        | Track activity in the system, write documentation              |
+| Customers + Profile Edit  | Max, Erfan       | Manage customer info and profile editing                       |
 
 ---
 
-## 👥 Team Participation
+## Burndown Chart Info  
 
-- All four team members were present and actively contributed to the Sprint 2 planning meeting.
-- User stories were written from the end-user’s perspective and follow clear acceptance criteria.
-- Tasks were broken down into manageable subtasks and assigned based on individual expertise.
-- All items were recorded in Trello, and each team member is responsible for working from a separate Git feature branch.
-- Documentation, demo prep, and daily standups will be maintained throughout the sprint.
+**March 26–30:** We focused on setting up the backend, authentication, and the table structure to make sure everything could work together smoothly.  
+
+**Mid Sprint:** We worked on the Orders and Products pages, fixing issues with data syncing and notifications.  
+
+**End Sprint:** We finished the dashboard, analytics, and activity logs. The profile editing and customer management tasks were completed last because they were lighter tasks.
+
+---
+
+## Team Participation  
+
+- All team members — Max, Jay, Erfan, and Nams — were present for the planning session and helped with the decisions.  
+- User stories were clear, with specific tasks to be completed.  
+- Tasks were assigned based on what each person would work on.  
+- We tracked progress on Trello, and everyone worked on their own Git branches.  
+- We had daily check-ins to make sure we were on track.
+
+---

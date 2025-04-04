@@ -1,39 +1,22 @@
 "use client";
 
-import React, { useEffect } from "react";
-import {
-  ArrowUpRight,
-  BlocksIcon,
-  CalendarIcon,
-  ChevronRight,
-  DollarSignIcon,
-  ImageIcon,
-  PlusIcon,
-  Receipt,
-  TagIcon,
-  TrendingUp,
-  TrendingUpIcon,
-} from "lucide-react";
+import React from "react";
+import { BlocksIcon, CalendarIcon, DollarSignIcon, Receipt, TagIcon, TrendingUpIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import Image from "next/image";
 import { createClient } from "@/utils/supabase/client/client";
 import { useQuery } from "@tanstack/react-query";
 import { getDashboardData } from "../_data";
 import { OrgMember } from "@/types";
-import Link from "next/link";
-import { cn, initialify, isPrivileged } from "@/lib/utils";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
-import { FaCircle } from "react-icons/fa";
 import { subMonths, format } from "date-fns";
 import { DateRange } from "react-day-picker";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Bar, BarChart, CartesianGrid, LabelList, XAxis, YAxis } from "recharts";
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
+import { PieChart, Pie, Label } from "recharts";
 
 interface AnalyticsDashboardProps {
   orgId: string;
@@ -191,17 +174,87 @@ export default function AnalyticsDashboard({ orgId, orgMember, initialData }: An
 
       <div className="grid gap-4 md:gap-8 lg:grid-cols-2">
         <ProductsStatusChart products={data?.products ?? []} />
+        <OrdersChart orders={data?.orders ?? []} />
       </div>
+
+      <CustomerInventoryChart products={data?.products ?? []} />
     </div>
   );
 }
 
-type Product = Awaited<ReturnType<typeof getDashboardData>>["products"][number];
-interface ProductsStatusChartProps {
-  products: Product[];
-  date: DateRange;
+type Order = Awaited<ReturnType<typeof getDashboardData>>["orders"][number];
+export function OrdersChart({ orders }: { orders: Order[] }) {
+  // Group products by status and count them
+  const statusCounts = orders.reduce(
+    (acc, order) => {
+      const status = order.fulfillment_status || "unknown";
+      acc[status] = (acc[status] || 0) + 1;
+      return acc;
+    },
+    {} as Record<string, number>,
+  );
+
+  const chartData = [
+    { status: "Fulfilled", count: statusCounts.fulfilled || 0, fill: "var(--color-fulfilled)" },
+    { status: "Pending", count: statusCounts.pending || 0, fill: "var(--color-pending)" },
+    { status: "Cancelled", count: statusCounts.cancelled || 0, fill: "var(--color-cancelled)" },
+  ];
+
+  const chartConfig = {
+    count: {
+      label: "Orders",
+    },
+    fulfilled: {
+      label: "Fulfilled",
+      color: "#4ade80",
+    },
+    pending: {
+      label: "Pending",
+      color: "#eab308",
+    },
+    cancelled: {
+      label: "Cancelled",
+      color: "#ef4444",
+    },
+  } satisfies ChartConfig;
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Orders Fulfillment Status</CardTitle>
+        <CardDescription>Distribution of order fulfillment statuses across your orders</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <ChartContainer config={chartConfig} className="min-h-[300px] w-full">
+          <PieChart>
+            <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
+            <Pie data={chartData} dataKey="count" nameKey="status" innerRadius={60} strokeWidth={5} fill="#8884d8">
+              <Label
+                content={({ viewBox }) => {
+                  if (viewBox && "cx" in viewBox && "cy" in viewBox) {
+                    return (
+                      <text x={viewBox.cx} y={viewBox.cy} textAnchor="middle" dominantBaseline="middle">
+                        <tspan x={viewBox.cx} y={viewBox.cy} className="fill-foreground text-3xl font-bold">
+                          {orders.length.toLocaleString()}
+                        </tspan>
+                        <tspan x={viewBox.cx} y={(viewBox.cy || 0) + 24} className="fill-muted-foreground">
+                          Orders
+                        </tspan>
+                      </text>
+                    );
+                  }
+                }}
+              />
+            </Pie>
+          </PieChart>
+        </ChartContainer>
+      </CardContent>
+    </Card>
+  );
 }
-export function ProductsStatusChart({ products, date }: ProductsStatusChartProps) {
+
+type Product = Awaited<ReturnType<typeof getDashboardData>>["products"][number];
+export function ProductsStatusChart({ products }: { products: Product[] }) {
   // Group products by status and count them
   const statusCounts = products.reduce(
     (acc, product) => {
@@ -219,17 +272,20 @@ export function ProductsStatusChart({ products, date }: ProductsStatusChartProps
   ];
 
   const chartConfig = {
+    count: {
+      label: "Quantity",
+    },
     active: {
       label: "Active",
-      color: "#4ade80", // Converted from #4ade80
+      color: "#4ade80",
     },
     draft: {
       label: "Draft",
-      color: "#67e8f9", // Converted from #67e8f9
+      color: "#67e8f9",
     },
     archived: {
       label: "Archived",
-      color: "#f97316", // Converted from #f97316
+      color: "#f97316",
     },
   } satisfies ChartConfig;
 
@@ -251,18 +307,10 @@ export function ProductsStatusChart({ products, date }: ProductsStatusChartProps
           >
             <CartesianGrid horizontal={false} />
 
-            <YAxis
-              dataKey="status"
-              type="category"
-              tickLine={false}
-              tickMargin={10}
-              axisLine={false}
-              tickFormatter={(value) => value.slice(0, 3)}
-              hide
-            />
+            <YAxis dataKey="status" type="category" tickLine={false} tickMargin={10} axisLine={false} hide />
             <XAxis dataKey="count" type="number" hide />
 
-            <ChartTooltip cursor={false} content={<ChartTooltipContent indicator="line" />} />
+            <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
 
             <Bar dataKey="count" radius={4} fill="var(--color-status)" barSize={40}>
               <LabelList
@@ -273,6 +321,75 @@ export function ProductsStatusChart({ products, date }: ProductsStatusChartProps
                 fontSize={12}
               />
               <LabelList dataKey="count" position="right" offset={8} className="fill-foreground" fontSize={12} />
+            </Bar>
+          </BarChart>
+        </ChartContainer>
+      </CardContent>
+    </Card>
+  );
+}
+
+export function CustomerInventoryChart({ products }: { products: Product[] }) {
+  // Group products by customer and count inventory
+  const customerInventory = products.reduce(
+    (acc, product) => {
+      const customer = product.customer;
+      const customerId = customer.id || "unknown";
+      const customerName = customer.name || "Unknown Customer";
+
+      if (!acc[customerId]) {
+        acc[customerId] = {
+          customerId,
+          customerName,
+          count: 0,
+        };
+      }
+
+      // Add product quantity to customer's total
+      acc[customerId].count += product.inventory_quantity || 0;
+      return acc;
+    },
+    {} as Record<string, { customerId: string; customerName: string; count: number }>,
+  );
+
+  // Convert to array and sort by count (descending)
+  const chartData = Object.values(customerInventory)
+    .sort((a, b) => b.count - a.count)
+    .map((item) => ({
+      customer: item.customerName,
+      count: item.count,
+      fill: "var(--color-customer)",
+    }));
+
+  const chartConfig = {
+    count: {
+      label: "Inventory",
+    },
+    customer: {
+      label: "Customer",
+      color: "#414143",
+    },
+  } satisfies ChartConfig;
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Customer Inventory Distribution</CardTitle>
+        <CardDescription>Total inventory held by each customer</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <ChartContainer config={chartConfig} className="h-[400px] w-full">
+          <BarChart accessibilityLayer data={chartData}>
+            <CartesianGrid horizontal={false} />
+
+            <YAxis dataKey="count" type="number" hide />
+
+            <XAxis dataKey="customer" tickLine={false} tickMargin={10} axisLine={false} tick={{ fontSize: 12 }} />
+
+            <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
+
+            <Bar dataKey="count" radius={4} fill="var(--color-customer)">
+              <LabelList dataKey="count" position="top" offset={12} className="fill-foreground" fontSize={12} />
             </Bar>
           </BarChart>
         </ChartContainer>

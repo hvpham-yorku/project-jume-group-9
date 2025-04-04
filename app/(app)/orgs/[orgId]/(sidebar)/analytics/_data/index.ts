@@ -20,7 +20,10 @@ export async function getDashboardData({ supabase, orgId, date }: GetDashboardDa
 }
 
 export async function getProductData({ supabase, orgId, date }: GetDashboardDataProps) {
-  const query = supabase.from("products").select("*", { count: "exact" }).eq("org_id", orgId);
+  const query = supabase
+    .from("products")
+    .select("*, customer:customers(id, name)", { count: "exact" })
+    .eq("org_id", orgId);
 
   if (date) {
     if (date.from) {

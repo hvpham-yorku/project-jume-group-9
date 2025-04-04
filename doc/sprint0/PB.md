@@ -93,7 +93,7 @@
 15. **Export Inventory Data**
     - **User Story:** As an admin/manager, I want to export inventory data so that I can store records offline.
     - **Criteria of Satisfaction:**
-      - Can be exported as CSV/PDF and is available on every orders/products/customers page.
+      - It is is available on every orders/products/customers activity other than reading.
 
 ---
 

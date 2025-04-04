@@ -24,9 +24,9 @@ The goal of Sprint 2 is to finish the remaining features for **SmartStock**, the
 
 ---
 
-## Scope of the Project: Epics and Key Features  
+## Scope of the Project: User Stories
 
-**1. Orders Management Epic**  
+**1. Orders Management**  
 *Goal:* Allow admins to manage customer orders through an easy-to-use interface.
 
   **Key Features:**  
@@ -41,7 +41,7 @@ The goal of Sprint 2 is to finish the remaining features for **SmartStock**, the
 
 ---
 
-**2. Product & Inventory Management Epic**  
+**2. Product & Inventory Management**  
 *Goal:* Manage the products in the inventory, including adding, editing, and viewing products.
 
   **Key Features:**  
@@ -54,7 +54,7 @@ The goal of Sprint 2 is to finish the remaining features for **SmartStock**, the
 
 ---
 
-**3. Home Page & Activity Epic**  
+**3. Home Page & Activity**  
 *Goal:* Show key stock data and recent activities in one place.
 
   **Key Features:**  
@@ -67,7 +67,7 @@ The goal of Sprint 2 is to finish the remaining features for **SmartStock**, the
 
 ---
 
-**4. Analytics Page Epic**  
+**4. Analytics Page**  
 *Goal:* Show data in charts to help with decision-making.
 
   **Key Features:**  

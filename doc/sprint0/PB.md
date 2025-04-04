@@ -117,17 +117,23 @@
    - **User Story:** As a user, I want a clear and easy navigation system so that I can quickly move between features.
    - **Criteria of Satisfaction:**
      - Navigation sidebar is structured logically with key sections.
-    
+20. **Home Screen Role-Based Visibility**
+   - **User Story:** As a user, I want to see only the dashboard widgets and data that match my assigned role (Admin, Manager, or Employee), so that I don’t access unauthorized features.
+   - **Criteria of Satisfaction:**
+      - Admins and Managers can view full dashboard (stock summary, orders, revenue, recent activity, analytics).
+      - Employees can only view stock summary and recent activity, with restricted access to other dashboard features.
+      - Sidebar and navigation dynamically adjust based on user role.
+	   - Unauthorized sections should be hidden or disabled completely for non-privileged users.
      
 ## **7️⃣ UX**
-20. **Switch From One Warehouse to an Entire different Warehouse (Multi-tenancy)**  
+21. **Switch From One Warehouse to an Entire different Warehouse (Multi-tenancy)**  
    - **User Story:** As a user, I can be from multiple warehouses and should be able to quickly swtich between warehouses and see the same dashboard for that warehouse inventory.
    - **Criteria of Satisfaction:**  
      - Users can successfully sign-out from their current warehouse and change from one warehouse to another with every features available across all of them.
     
 
 ## **8️⃣ Seeding and Testing**     
-21. **Staging data for 2 different inventories**  
+22. **Staging data for 2 different inventories**  
    - **User Story:** As a user, I can playaround and see the usage of my entire dashboard using fake data to test its capabilities.
    - **Criteria of Satisfaction:**  
      - Users can successfully play around with ordering, products, analytics and notification features with these databases.
